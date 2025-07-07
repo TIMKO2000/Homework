@@ -1,0 +1,53 @@
+%pip install yfinance
+%pip install pandas
+%pip install streamlit
+import yfinance as yf
+
+# Fetch Tesla stock data
+tesla_data = yf.download("TSLA", start="2020-01-01", end="2023-01-01")
+print(tesla_data['Close'])
+import requests
+from bs4 import BeautifulSoup
+
+def get_tesla_revenue():
+    url = "https://finance.yahoo.com/quote/TSLA/financials"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    revenue = soup.find_all('td', {'data-test': 'REVENUE-value'})
+    return revenue[0].text if revenue else "Revenue not found"
+
+tesla_revenue = get_tesla_revenue()
+print(f"Tesla Revenue: {tesla_revenue}")
+gamestop_data = yf.download("GME", start="2020-01-01", end="2023-01-01")
+print(gamestop_data['Close'])
+def get_gamestop_revenue():
+    url = "https://finance.yahoo.com/quote/GME/financials"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    revenue = soup.find_all('td', {'data-test': 'REVENUE-value'})
+    return revenue[0].text if revenue else "Revenue not found"
+
+gamestop_revenue = get_gamestop_revenue()
+print(f"GameStop Revenue: {gamestop_revenue}")
+import streamlit as st
+
+# Set up the dashboard title
+st.title("Tesla Stock and Revenue Dashboard")
+
+# Display stock prices
+st.subheader("Tesla Stock Prices")
+st.line_chart(tesla_data['Close'])
+
+# Display revenue
+st.subheader("Tesla Revenue")
+st.write(f"Revenue: {tesla_revenue}")
+# Set up the dashboard title
+st.title("GameStop Stock and Revenue Dashboard")
+
+# Display stock prices
+st.subheader("GameStop Stock Prices")
+st.line_chart(gamestop_data['Close'])
+
+# Display revenue
+st.subheader("GameStop Revenue")
+st.write(f"Revenue: {gamestop_revenue}")
